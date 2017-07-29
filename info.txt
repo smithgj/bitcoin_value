@@ -1,0 +1,20 @@
+info:
+
+https://poloniex.com/exchange#btc_eth
+
+
+https://poloniex.com/support/api/
+
+returnTradeHistory
+Returns the past 200 trades for a given market, or up to 50,000 trades between a range specified in UNIX timestamps by the "start" and "end" GET parameters. Sample output:
+
+[{"date":"2014-02-10 04:23:23","type":"buy","rate":"0.00007600","amount":"140","total":"0.01064"},{"date":"2014-02-10 01:19:37","type":"buy","rate":"0.00007600","amount":"655","total":"0.04978"}, ... ]
+
+Call: https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_NXT&start=1410158341&end=1410499372
+
+times are in UTC
+
+
+https://github.com/smithgj/bitcoin_value
+
+https://www.guru.com/jobs/extract-website-data-into-spreadsheets/1367165
