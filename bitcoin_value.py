@@ -23,11 +23,10 @@ def get_quote(coins):
     quote_url = url1 + curr_pair + start + end
     logging.debug(quote_url)
     r = requests.get(quote_url)
-    logging.debug(r)
-    return('dummy data')
+    # logging.debug(r.text)
+    return(r.text)
 
 def read_file():
-    input_data = []
     with open('bv_inputs.txt') as f:
         input_data = f.readlines()
     # you may also want to remove whitespace characters like `\n` at the end of each line
@@ -41,22 +40,31 @@ def go():
         log_level = data_list.pop(0)
         log_level = log_level[(log_level.find('=') + 1):]
         log_level = log_level.strip()
-        if (log_level.upper() in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']):
-            logging.basicConfig(filename='bitcoin_value.log', level=logging.log_level.upper(),
+        log_level = log_level.upper()
+        if (log_level in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']):
+            my_level = logging.getLevelName(log_level)
+            logging.basicConfig(filename='bitcoin_value.log', level=my_level,
                                 format='%(asctime)s - %(levelname)s - %(message)s')
             # logging.disable(logging.DEBUG)
         else:
             file = open('bitcoin_value.log', 'w')
             file.write('logging level could not be set.')
-    while (true):
+    while (True):
+        data_line = []
+        data = []
         count = 0
         for i in range(0, len(data_list)):
-            get_quote(i)
+            x = get_quote(data_list[i])
+
+            # data_line.insert(0, data_list[i])
+            data.append(data_line)
             count = count + 1
             if ((count % 5) == 0):
-                sleep(1)
+                time.sleep(1)
         #TODO write data to csv files
-        sleep(1)
+        for j in range (0, len(data)):
+            logging.debug(data[j])
+        time.sleep(1)
 
 if __name__ == "__main__":
     go()
