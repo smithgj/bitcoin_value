@@ -51,12 +51,12 @@ def str2listofdicts(txt, pair):
 
 
 
-def get_quote(coins):
+def get_quote(coins, seconds):
     # https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_NXT&start=1410158341&end=1410499372
     url1 = 'https://poloniex.com/public?command=returnTradeHistory'
     curr_pair = '&currencyPair=' + coins
     curr_time = arrow.utcnow()
-    start = '&start=' + str(curr_time.timestamp - 15)
+    start = '&start=' + str(curr_time.timestamp - seconds)
     end = '&end=' + str(curr_time.timestamp)
     quote_url = url1 + curr_pair + start + end
     logging.debug(quote_url)
@@ -93,12 +93,18 @@ def go():
         else:
             file = open('bitcoin_value.log', 'w')
             file.write('logging level could not be set.')
+    # calculate how far back in time to go for the get_quote function
+    # seconds = ((# of entries in input list) / 5 ) + 1 ; if <2 use 2
+    seconds = (len(data_list)//5) + 1
+    if (seconds < 2):
+        seconds = 2
+
     while (True):
         trans_data = []
         data = []
         count = 0
         for i in range(0, len(data_list)):
-            data_line = get_quote(data_list[i])
+            data_line = get_quote(data_list[i], seconds)
             trans_data = str2listofdicts(data_line, data_list[i])
             data.append(trans_data)
             count = count + 1
