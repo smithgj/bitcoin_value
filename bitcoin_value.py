@@ -71,6 +71,12 @@ def read_file():
         input_data = [x.strip() for x in input_data]
     return(input_data)
 
+def writelist2files(list):
+    pass
+    # x = "file1"
+    # h = open("%s.html" % x, "w")
+    # h.close
+
 def go():
     data_list = read_file()
     # get log level, and remove it from data_list
@@ -98,9 +104,8 @@ def go():
             count = count + 1
             if ((count % 5) == 0):
                 time.sleep(1)
-        #TODO write data to csv files
-        for j in range (0, len(data)):
-            logging.info(data[j])
+        #TODO write data to csv files now that we went through the input file
+        writelist2files(data)
         time.sleep(1)
 
 if __name__ == "__main__":
