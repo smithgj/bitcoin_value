@@ -71,11 +71,23 @@ def read_file():
         input_data = [x.strip() for x in input_data]
     return(input_data)
 
-def writelist2files(list):
-    pass
-    # x = "file1"
-    # h = open("%s.html" % x, "w")
-    # h.close
+def writelist2files(results):
+    open_files = {}
+    for i in range (0,len(results)):
+        filename = results[i].get('pair')
+        if filename in open_files:
+            handle = open_files[filename]
+        else:
+            handle = open("%s.csv" % filename, "w")
+            open_files[filename] = handle
+        # write data to file, based on type = buy or sell
+        handle.write('blah')
+    # close all files opened
+    for key in open_files.keys():
+        (open_files.get(key)).close()
+        if (open_files.get(key)).closed:
+            logging.debug(key + " is closed")
+    return()
 
 def go():
     data_list = read_file()
@@ -100,7 +112,6 @@ def go():
         seconds = 2
 
     while (True):
-        trans_data = []
         data = []
         count = 0
         for i in range(0, len(data_list)):
@@ -110,7 +121,7 @@ def go():
             count = count + 1
             if ((count % 5) == 0):
                 time.sleep(1)
-        #TODO write data to csv files now that we went through the input file
+        # TODO write data to csv files now that we went through the input file
         writelist2files(data)
         time.sleep(1)
 
