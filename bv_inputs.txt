@@ -1,3 +1,4 @@
 log_level = debug
 BTC_ETH
 BTC_STEEM
+BTC_STR
