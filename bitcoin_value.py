@@ -51,8 +51,6 @@ def str2listofdicts(txt, pair):
     logging.debug('leaving str2listofdicts')
     return trans_list_dicts
 
-
-
 def get_quote(coins, seconds):
     # https://poloniex.com/public?command=returnTradeHistory&currencyPair=BTC_NXT&start=1410158341&end=1410499372
     url1 = 'https://poloniex.com/public?command=returnTradeHistory'
@@ -62,7 +60,19 @@ def get_quote(coins, seconds):
     end = '&end=' + str(curr_time.timestamp)
     quote_url = url1 + curr_pair + start + end
     logging.debug(quote_url)
-    r = requests.get(quote_url)
+    try:
+        r = requests.get(quote_url)
+    except Exception as e:
+        logging.warning("Couldn't connect to poloniex server:")
+        logging.warning(e)
+        logging.warning('Terminating script')
+        quit()
+    if (r.status_code != 200):
+        logging.warning('Bad response from poloniex server')
+        logging.warning('url attempted: ' + quote_url)
+        logging.warning('error code: ' + str(r.status_code))
+        logging.warning('Skipping ' + coins)
+        return('')
     logging.debug(r.text)
     return(r.text)
 
@@ -118,6 +128,15 @@ def writelist2files(results):
             logging.debug(key + " is closed")
     return
 
+
+def validate(data_line):
+    # check for bad input error message from api {"error":"Invalid currency pair."}
+    if 'Invalid currency pair.' in data_line:
+        return False
+    else:
+        return True
+
+
 def go():
     data_list = read_file()
     # get log level, and remove it from data_list
@@ -131,20 +150,34 @@ def go():
             logging.basicConfig(filename='bitcoin_value.log', level=my_level,
                                 format='%(asctime)s - %(levelname)s - %(message)s')
             # logging.disable(logging.DEBUG)
-        else:
-            file = open('bitcoin_value.log', 'w')
-            file.write('logging level could not be set.')
+    else:
+        logging.basicConfig(filename='bitcoin_value.log', level=logging.WARNING,
+                                format='%(asctime)s - %(levelname)s - %(message)s')
     # calculate how far back in time to go for the get_quote function
     # seconds = ((# of entries in input list) / 5 ) + 1 ; if <2 use 2
     seconds = (len(data_list)//5) + 1
     if (seconds < 2):
         seconds = 2
 
+    bad_input_pair = []
+
     while (True):
         data = []
         count = 0
         for i in range(0, len(data_list)):
+            logging.debug('bad_input_pair:')
+            logging.debug(bad_input_pair)
+            if data_list[i] in bad_input_pair:
+                continue
             data_line = get_quote(data_list[i], seconds)
+            # check for bad input error message from api {"error":"Invalid currency pair."}
+            if not validate(data_line):
+                logging.warning(data_list[i] + ' is not a valid coin combination.')
+                bad_input_pair.append(data_list[i])
+                count = count + 1
+                if ((count % 5) == 0):
+                    time.sleep(1)
+                continue
             trans_data = str2listofdicts(data_line, data_list[i])
             data.append(trans_data)
             count = count + 1
