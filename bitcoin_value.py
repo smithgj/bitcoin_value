@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Greg Smith smithgj66@hotmail.com
 #
 #
