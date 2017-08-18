@@ -78,7 +78,12 @@ def read_file():
 def writelist2files(results):
     open_files = {}
     for i in range(0, len(results)):
-        filename = results[i].get('pair')
+        logging.debug('results =')
+        logging.debug(results)
+        # check for empty list
+        if results[i] == []:
+            continue
+        filename = results[i][0].get('pair')
         # CASE 1 file has already been opened for writing
         if (filename in open_files):
             handle = open_files[filename]
@@ -98,17 +103,18 @@ def writelist2files(results):
                 handle.write('globalTradeID,tradeID,date,rate,,,globalTradeID,tradeID,date,rate\n')
 
         # write data to file, based on type = buy or sell
-        if (results[i].get('type') == 'sell'):
-            handle.write(results[i].get('globalTradeID') + ','
-                         + results[i].get('tradeID') + ','
-                         + results[i].get('date') + ','
-                         + results[i].get('rate') + '\n')
-        else:
-            handle.write(',,,,,,' +
-                         results[i].get('globalTradeID') + ','
-                         + results[i].get('tradeID') + ','
-                         + results[i].get('date') + ','
-                         + results[i].get('rate') + '\n')
+        for j in range(0, len(results[i])):
+            if (results[i][j].get('type') == 'sell'):
+                handle.write(results[i][j].get('globalTradeID') + ','
+                             + results[i][j].get('tradeID') + ','
+                             + results[i][j].get('date') + ','
+                             + results[i][j].get('rate') + '\n')
+            else:
+                handle.write(',,,,,,' +
+                             results[i][j].get('globalTradeID') + ','
+                             + results[i][j].get('tradeID') + ','
+                             + results[i][j].get('date') + ','
+                             + results[i][j].get('rate') + '\n')
     # close all files opened
     for key in open_files.keys():
         (open_files.get(key)).close()
