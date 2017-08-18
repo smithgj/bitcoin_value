@@ -1,4 +1,4 @@
-log_level = warning
+log_level = debug
 BTC_ETH
 BTC_STR
 BTC_LTC
