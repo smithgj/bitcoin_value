@@ -10,7 +10,7 @@
 #       BTC_ETH
 #       BTC_STEEM
 
-
+import os
 import logging
 import time
 import arrow
@@ -138,6 +138,15 @@ def go():
         else:
             file = open('bitcoin_value.log', 'w')
             file.write('logging level could not be set.')
+    # check for "results" sub-directory, create if it doesn't exist,
+    # and cd there now that we have read the input file and will be
+    # outputting the results to .csv files
+    if not(os.path.isdir("results")):
+        try:
+            os.mkdir("results", 0o777)
+            os.chdir("results")
+        except OSError:
+            logging.warning("Could not create 'results' directory")
     # calculate how far back in time to go for the get_quote function
     # seconds = ((# of entries in input list) / 5 ) + 1 ; if <2 use 2
     seconds = (len(data_list)//5) + 1
@@ -154,7 +163,6 @@ def go():
             count = count + 1
             if ((count % 5) == 0):
                 time.sleep(1)
-        # TODO write data to csv files now that we went through the input file
         writelist2files(data)
         time.sleep(1)
 
