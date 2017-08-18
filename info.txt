@@ -18,3 +18,6 @@ times are in UTC
 https://github.com/smithgj/bitcoin_value
 
 https://www.guru.com/jobs/extract-website-data-into-spreadsheets/1367165
+
+
+123
